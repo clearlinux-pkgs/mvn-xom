@@ -4,12 +4,16 @@
 #
 Name     : mvn-xom
 Version  : 10
-Release  : 1
+Release  : 2
 URL      : https://github.com/elharo/xom/archive/XOM_10.tar.gz
 Source0  : https://github.com/elharo/xom/archive/XOM_10.tar.gz
+Source1  : https://repo1.maven.org/maven2/xom/xom/1.0/xom-1.0.jar
+Source2  : https://repo1.maven.org/maven2/xom/xom/1.0/xom-1.0.pom
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : Apache-1.1 LGPL-2.1 Public-Domain W3C-19980720
+Requires: mvn-xom-data = %{version}-%{release}
+Requires: mvn-xom-license = %{version}-%{release}
 BuildRequires : apache-ant
 BuildRequires : buildreq-mvn
 
@@ -17,17 +21,53 @@ BuildRequires : buildreq-mvn
 XOM is a library. By itself, it doesn't do much of anything. It exists
 only to be used by other programs. It requires Java 1.2 or later.
 
+%package data
+Summary: data components for the mvn-xom package.
+Group: Data
+
+%description data
+data components for the mvn-xom package.
+
+
+%package license
+Summary: license components for the mvn-xom package.
+Group: Default
+
+%description license
+license components for the mvn-xom package.
+
+
 %prep
 %setup -q -n xom-XOM_10
 
 %build
-export http_proxy=http://127.0.0.1:9/
-export https_proxy=http://127.0.0.1:9/
-export no_proxy=localhost,127.0.0.1,0.0.0.0
-export ANT_HOME=/usr/share/ant
-ant -d -v
+
 %install
+mkdir -p %{buildroot}/usr/share/package-licenses/mvn-xom
+cp LICENSE.txt %{buildroot}/usr/share/package-licenses/mvn-xom/LICENSE.txt
+cp lib/LICENSE-DOM.html %{buildroot}/usr/share/package-licenses/mvn-xom/lib_LICENSE-DOM.html
+cp lib/LICENSE-SAX.html %{buildroot}/usr/share/package-licenses/mvn-xom/lib_LICENSE-SAX.html
+cp lib/XalanLicense.txt %{buildroot}/usr/share/package-licenses/mvn-xom/lib_XalanLicense.txt
+cp lib/XercesLicense.txt %{buildroot}/usr/share/package-licenses/mvn-xom/lib_XercesLicense.txt
+mkdir -p %{buildroot}/usr/share/java/.m2/repository/xom/xom/1.0
+cp %{SOURCE1} %{buildroot}/usr/share/java/.m2/repository/xom/xom/1.0/xom-1.0.jar
+
+mkdir -p %{buildroot}/usr/share/java/.m2/repository/xom/xom/1.0
+cp %{SOURCE2} %{buildroot}/usr/share/java/.m2/repository/xom/xom/1.0/xom-1.0.pom
 
 
 %files
 %defattr(-,root,root,-)
+
+%files data
+%defattr(-,root,root,-)
+/usr/share/java/.m2/repository/xom/xom/1.0/xom-1.0.jar
+/usr/share/java/.m2/repository/xom/xom/1.0/xom-1.0.pom
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/mvn-xom/LICENSE.txt
+/usr/share/package-licenses/mvn-xom/lib_LICENSE-DOM.html
+/usr/share/package-licenses/mvn-xom/lib_LICENSE-SAX.html
+/usr/share/package-licenses/mvn-xom/lib_XalanLicense.txt
+/usr/share/package-licenses/mvn-xom/lib_XercesLicense.txt
